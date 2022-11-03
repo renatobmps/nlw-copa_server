@@ -15,8 +15,71 @@ datasource db {
 }
 
 model Pool {
-  id       String   @id @default(cuid())
-  title    String
-  code     String   @unique
-  createAt DateTime @default(now())
+  // Required
+  title        String
+  code         String        @unique
+  ownerId      String?
+  participants Participant[]
+  // Optional
+  // Automatic
+  id           String        @id @default(cuid())
+  createAt     DateTime      @default(now())
+  // Prisma specific
+  owner        User?         @relation(fields: [ownerId], references: [id])
+}
+
+model Participant {
+  // Required
+  userId  String
+  poolId  String
+  guesses Guess[]
+  // Optional
+  // Automatic
+  id      String  @id @default(cuid())
+  // Prisma specific
+  user    User    @relation(fields: [userId], references: [id])
+  pool    Pool    @relation(fields: [poolId], references: [id])
+
+  @@unique([userId, poolId])
+}
+
+model User {
+  // Required
+  name            String
+  email           String        @unique
+  participatingAt Participant[]
+  ownPools        Pool[]
+  // Optional
+  avatar_url      String?
+  // Automatic
+  id              String        @id @default(cuid())
+  // Prisma specific
+  createAt        DateTime      @default(now())
+}
+
+model Game {
+  // Required
+  date                  DateTime
+  firstTeamCountryCode  String
+  secondTeamCountryCode String
+  guesses               Guess[]
+  // Optional
+  // Automatic
+  id                    String   @id @default(cuid())
+  // Prisma specific
+}
+
+model Guess {
+  // Required
+  firstTeamPoints  Int
+  secondTeamPoints Int
+  gameId           String
+  participantId    String
+  // Optional
+  // Automatic
+  id               String      @id @default(cuid())
+  createAt         DateTime    @default(now())
+  // Prisma specific
+  game             Game        @relation(fields: [gameId], references: [id])
+  participant      Participant @relation(fields: [participantId], references: [id])
 }
