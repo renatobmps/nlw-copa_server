@@ -34,7 +34,7 @@ export async function guessRoutes(fastify: FastifyInstance) {
 
     if (!participant) {
       return reply.code(400).send({
-        message: 'You are not inside this pool'
+        message: 'You are not inside this poll'
       });
     };
 
