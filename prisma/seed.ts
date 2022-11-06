@@ -8,10 +8,11 @@ async function main() {
       email: 'test@prisma.io',
       name: 'test',
       avatar_url: 'https://github.com/prisma.png',
+      googleId: '123456789',
     },
   });
 
-  const pool = await prisma.pool.create({
+  const poll = await prisma.poll.create({
     data: {
       title: 'Bolão 1',
       code: 'BOLAO1',
@@ -35,9 +36,9 @@ async function main() {
           secondTeamPoints: 1,
           participant: {
             connect: {
-              userId_poolId: {
+              userId_pollId: {
                 userId: user.id,
-                poolId: pool.id,
+                pollId: poll.id,
               },
             },
           },

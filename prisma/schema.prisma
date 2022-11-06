@@ -14,7 +14,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Pool {
+model Poll {
+  // id
+  id           String        @id @default(cuid())
   // Required
   title        String
   code         String        @unique
@@ -22,42 +24,49 @@ model Pool {
   participants Participant[]
   // Optional
   // Automatic
-  id           String        @id @default(cuid())
   createAt     DateTime      @default(now())
   // Prisma specific
   owner        User?         @relation(fields: [ownerId], references: [id])
+  // contraints
 }
 
 model Participant {
+  // id
+  id      String  @id @default(cuid())
   // Required
   userId  String
-  poolId  String
+  pollId  String
   guesses Guess[]
   // Optional
   // Automatic
-  id      String  @id @default(cuid())
   // Prisma specific
   user    User    @relation(fields: [userId], references: [id])
-  pool    Pool    @relation(fields: [poolId], references: [id])
+  poll    Poll    @relation(fields: [pollId], references: [id])
 
-  @@unique([userId, poolId])
+  // contraints
+  @@unique([userId, pollId])
 }
 
 model User {
+  // id
+  id              String        @id @default(cuid())
   // Required
   name            String
   email           String        @unique
+  googleId        String        @unique
   participatingAt Participant[]
-  ownPools        Pool[]
+  ownPolls        Poll[]
   // Optional
   avatar_url      String?
   // Automatic
-  id              String        @id @default(cuid())
   // Prisma specific
   createAt        DateTime      @default(now())
+  // contraints
 }
 
 model Game {
+  // id
+  id                    String   @id @default(cuid())
   // Required
   date                  DateTime
   firstTeamCountryCode  String
@@ -65,11 +74,13 @@ model Game {
   guesses               Guess[]
   // Optional
   // Automatic
-  id                    String   @id @default(cuid())
   // Prisma specific
+  // contraints
 }
 
 model Guess {
+  // id
+  id               String      @id @default(cuid())
   // Required
   firstTeamPoints  Int
   secondTeamPoints Int
@@ -77,9 +88,11 @@ model Guess {
   participantId    String
   // Optional
   // Automatic
-  id               String      @id @default(cuid())
   createAt         DateTime    @default(now())
   // Prisma specific
   game             Game        @relation(fields: [gameId], references: [id])
   participant      Participant @relation(fields: [participantId], references: [id])
+
+  // contraints
+  @@unique([participantId, gameId])
 }
